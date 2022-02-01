@@ -1,0 +1,57 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: adguardhome
+
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: adguardhome
+  labels:
+    app: adguardhome
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: adguardhome
+  template:
+    metadata:
+      labels:
+        app: adguardhome
+    spec:
+      serviceAccountName: adguardhome
+      containers:
+        - image: lansible/adguardhome:latest
+          imagePullPolicy: Always
+          name: adguardhome
+          securityContext:
+            capabilities:
+                drop:
+                  - ALL
+                add:
+                  - NET_BIND_SERVICE
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+            runAsUser: 1000
+          readinessProbe:
+            httpGet:
+              port: dash
+            timeoutSeconds: 5
+          ports:
+            - containerPort: 3000
+              name: dash
+            - containerPort: 53
+              name: dns
+          volumeMounts:
+            - name: adguardhome-config
+              mountPath: /opt/adguardhome/conf/
+            - name: adguardhome-data
+              mountPath: /opt/adguardhome/work
+      volumes:
+        - name: adguardhome-config
+          configMap:
+            name: adguardhome-config
+        - name: adguardhome-data
+          emptyDir: {}

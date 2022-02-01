@@ -1,0 +1,22 @@
+---
+variables:
+  DOCKER_IMAGE_NAME: lansible/adguardhome
+
+include:
+  - template: Container-Scanning.gitlab-ci.yml
+  - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/default.yml
+  - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/docker-build.yml
+  - remote: https://raw.githubusercontent.com/LANsible/gitlab-includes/master/sast-cis-benchmark.yml
+
+test:
+  stage: test
+  tags:
+    - docker
+  variables:
+    DOCKER_IMAGE_NAME: ${CI_REGISTRY_IMAGE}
+    DOCKER_IMAGE_TAG: ${CI_COMMIT_SHA}-amd64
+  script:
+    # Mosquitto help exits with code 3 so catch that as an exit 0 (expected)
+    - docker run ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} -h
+  except:
+    - tags

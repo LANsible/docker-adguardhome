@@ -1,0 +1,24 @@
+---
+version: "3.8"
+services:
+  # needed to set the directory permissions
+  volumes-provisioner:
+    image: hasnat/volumes-provisioner
+    environment:
+      PROVISION_DIRECTORIES: "1000:1000:0755:/opt/adguardhome/work"
+    volumes:
+      - adguardhome-data:/opt/adguardhome/work
+
+  adguardhome:
+    container_name: adguardhome
+    image: lansible/adguardhome:latest
+    ports:
+      - "53:53"
+      - "3000:3000"
+    volumes:
+      - ./config:/opt/adguardhome/conf
+      - adguardhome-data:/opt/adguardhome/work
+    restart: unless-stopped
+
+volumes:
+  adguardhome-data:
