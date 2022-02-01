@@ -42,9 +42,8 @@ COPY --from=lansible/upx /usr/bin/upx /usr/bin/upx
 # no upx: 24.7M
 # upx: 8.2M
 # --best: 6.6M
-# --brute: 5.0M
-# --ultra-brute: 5.0M
-RUN upx --brute /AdGuardHome/AdGuardHome && \
+# --brute: results in SIGILL on arm64
+RUN upx --best /AdGuardHome/AdGuardHome && \
     upx -t /AdGuardHome/AdGuardHome
 
 
