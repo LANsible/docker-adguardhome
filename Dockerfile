@@ -67,7 +67,8 @@ COPY --from=builder /etc/ssl/certs/ca-certificates.crt /etc/ssl/certs/ca-certifi
 COPY --from=builder /AdGuardHome/AdGuardHome /opt/adguardhome/AdGuardHome
 # Add the default config
 COPY --chown=adguardhome:adguardhome ./examples/docker-compose/config/AdGuardHome.yaml /opt/adguardhome/conf/AdGuardHome.yaml
-# Add symlink (tarred to keep symbolic link to /dev/shm). Can be overidden by user for persistance
+# Add symlink work -> /dev/shm (tarred to keep symbolic link to /dev/shm)
+# Can be overidden by user for persistance -v $PWD/:opt/adguardhome/work
 ADD  ./symlink-work-dev-shm /opt/adguardhome/
 
 # 53     : TCP, UDP : DNS
