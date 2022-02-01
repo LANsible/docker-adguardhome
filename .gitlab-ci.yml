@@ -16,7 +16,6 @@ test:
     DOCKER_IMAGE_NAME: ${CI_REGISTRY_IMAGE}
     DOCKER_IMAGE_TAG: ${CI_COMMIT_SHA}-amd64
   script:
-    # Mosquitto help exits with code 3 so catch that as an exit 0 (expected)
-    - docker run ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG} -h
+    - docker run ${DOCKER_IMAGE_NAME}:${DOCKER_IMAGE_TAG}
   except:
     - tags
