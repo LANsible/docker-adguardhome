@@ -52,6 +52,9 @@ RUN upx --best /AdGuardHome/AdGuardHome && \
 #######################################################################################################################
 FROM scratch
 
+# Set tempdir for possible writes
+ENV TMPDIR=/dev/shm
+
 # Add description
 LABEL org.label-schema.description="AdGuardHome as static binary in a scratch container"
 
