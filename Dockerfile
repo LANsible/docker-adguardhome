@@ -13,10 +13,12 @@ WORKDIR /AdGuardHome/client
 # Install all modules
 # Run build to make all html files
 # creates client/public folder
+# save VERSION to file for later stages
 RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
   export MAKEFLAGS="-j$((CORES+1)) -l${CORES}"; \
   npm ci --no-audit --no-optional --no-update-notifier && \
-  npm run build-prod
+  npm run build-prod && \
+  echo ${VERSION} > ../VERSION
 
 
 #######################################################################################################################
@@ -33,8 +35,10 @@ COPY --from=frontend /AdGuardHome /AdGuardHome
 
 WORKDIR /AdGuardHome
 
-RUN go mod download && \
-    CGO_ENABLED=0 go build -ldflags='-s -w'
+# use provided built scripts to get version in final build
+RUN chmod +x scripts/make/*.sh && \
+    ./scripts/make/go-deps.sh && \
+    CHANNEL=release VERSION=$(cat VERSION) ./scripts/make/go-build.sh
 
 # 'Install' upx from image since upx isn't available for aarch64 from Alpine
 COPY --from=lansible/upx /usr/bin/upx /usr/bin/upx
