@@ -1,6 +1,7 @@
 ---
 variables:
   DOCKER_IMAGE_NAME: lansible/adguardhome
+  DOCKER_TEST_COMMAND: --version
 
 include:
   - template: Container-Scanning.gitlab-ci.yml
@@ -10,10 +11,6 @@ include:
 
 test_amd64:
   extends: .test
-  variables:
-    DOCKER_COMMAND: --version
 
 test_arm64:
   extends: .test
-  variables:
-    DOCKER_COMMAND: --version
