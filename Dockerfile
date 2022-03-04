@@ -23,6 +23,16 @@ RUN sed -n -e 's/^\(HAVE.*\)=\(.*\)/#define \1 \2/p' config.make > config.h && \
         CFLAGS="-static -O3 -g -Wall -fno-strict-aliasing -I.. -I../include" \
         LDFLAGS="-static -Llib/"
 
+# 'Install' upx from image since upx isn't available for aarch64 from Alpine
+COPY --from=lansible/upx /usr/bin/upx /usr/bin/upx
+# Minify binaries
+# no upx: 24.7M
+# upx: 8.2M
+# --best: 6.6M
+# --brute: results in SIGILL on arm64
+RUN upx --best /net-tools/arp && \
+    upx -t -k /net-tools/arp
+
 
 #######################################################################################################################
 # Build AdGuardHome frontend
