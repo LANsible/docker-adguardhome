@@ -136,7 +136,6 @@ EXPOSE 53/tcp 53/udp 67/udp 68/udp 80/tcp 443/tcp 443/udp 784/udp\
 USER adguardhome
 ENTRYPOINT ["/opt/adguardhome/AdGuardHome"]
 CMD [ \
-	"-v", \
 	"--no-check-update", \
 	"-c", "/opt/adguardhome/conf/AdGuardHome.yaml", \
 	"-h", "0.0.0.0", \
