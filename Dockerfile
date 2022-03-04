@@ -1,3 +1,29 @@
+FROM alpine:3.15 as net-tools
+
+# https://github.com/ecki/net-tools/tags
+ENV VERSION=v2.10
+
+# source: https://git.alpinelinux.org/aports/tree/main/net-tools?h=3.15-stable
+RUN apk add --no-cache \
+    git \
+    build-base \
+    make \
+    bash \
+    linux-headers
+
+RUN git clone --depth 1 --branch "${VERSION}" https://github.com/ecki/net-tools.git /net-tools
+
+WORKDIR /net-tools
+
+# https://git.alpinelinux.org/aports/tree/main/net-tools/APKBUILD
+# make flags from `make -d` and https://github.com/ecki/net-tools/blob/master/Makefile
+ADD net-tools.config.make config.make
+RUN sed -n -e 's/^\(HAVE.*\)=\(.*\)/#define \1 \2/p' config.make > config.h && \
+    make arp \
+        CFLAGS="-static -O3 -g -Wall -fno-strict-aliasing -I.. -I../include" \
+        LDFLAGS="-static -Llib/"
+
+
 #######################################################################################################################
 # Build AdGuardHome frontend
 #######################################################################################################################
@@ -77,6 +103,10 @@ COPY --chown=adguardhome:adguardhome ./examples/docker-compose/config/AdGuardHom
 # Can be overidden by user for persistance -v $PWD/:opt/adguardhome/work
 ADD  ./symlink-work-dev-shm /opt/adguardhome/
 
+# Adguard uses arp
+# https://github.com/AdguardTeam/AdGuardHome/issues/3597
+COPY --from=net-tools /net-tools/arp /usr/bin/arp
+
 # 53     : TCP, UDP : DNS
 # 67     :      UDP : DHCP (server)
 # 68     :      UDP : DHCP (client)
@@ -96,6 +126,7 @@ EXPOSE 53/tcp 53/udp 67/udp 68/udp 80/tcp 443/tcp 443/udp 784/udp\
 USER adguardhome
 ENTRYPOINT ["/opt/adguardhome/AdGuardHome"]
 CMD [ \
+	"-v", \
 	"--no-check-update", \
 	"-c", "/opt/adguardhome/conf/AdGuardHome.yaml", \
 	"-h", "0.0.0.0", \
