@@ -60,7 +60,7 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
 #######################################################################################################################
 # Build static AdGuardHome
 #######################################################################################################################
-FROM golang:1.17.6-alpine3.15 as builder
+FROM golang:1.18.1-alpine3.15 as builder
 
 # Add unprivileged user and group
 RUN echo "adguardhome:x:1000:1000:adguardhome:/:" > /etc_passwd && \
@@ -72,9 +72,11 @@ COPY --from=frontend /AdGuardHome /AdGuardHome
 WORKDIR /AdGuardHome
 
 # use provided built scripts to get version in final build
-RUN chmod +x scripts/make/*.sh && \
+RUN apk --no-cache add git && \
+    chmod +x scripts/make/*.sh && \
     ./scripts/make/go-deps.sh && \
-    CHANNEL=release VERSION=$(cat VERSION) ./scripts/make/go-build.sh
+    CHANNEL=release VERSION=$(cat VERSION) ./scripts/make/go-build.sh && \
+    apk --no-network del git
 
 # 'Install' upx from image since upx isn't available for aarch64 from Alpine
 COPY --from=lansible/upx /usr/bin/upx /usr/bin/upx
