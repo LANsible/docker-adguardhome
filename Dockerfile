@@ -1,4 +1,4 @@
-FROM alpine:3.15 as net-tools
+FROM alpine:3.16 as net-tools
 
 # https://github.com/ecki/net-tools/tags
 ENV VERSION=v2.10
@@ -40,7 +40,7 @@ RUN upx --best /net-tools/arp && \
 FROM lansible/nexe:4.0.0-beta.19 as frontend
 
 # https://github.com/AdguardTeam/AdGuardHome/releases/
-ENV VERSION=v0.107.6
+ENV VERSION=v0.107.7
 
 RUN git clone --depth 1 --branch "${VERSION}" https://github.com/AdguardTeam/AdGuardHome.git /AdGuardHome
 
