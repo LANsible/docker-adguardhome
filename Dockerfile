@@ -40,7 +40,7 @@ RUN upx --best /net-tools/arp && \
 FROM lansible/nexe:4.0.0-beta.19 as frontend
 
 # https://github.com/AdguardTeam/AdGuardHome/releases/
-ENV VERSION=v0.107.7
+ENV VERSION=v0.107.8
 
 RUN git clone --depth 1 --branch "${VERSION}" https://github.com/AdguardTeam/AdGuardHome.git /AdGuardHome
 
@@ -60,7 +60,7 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
 #######################################################################################################################
 # Build static AdGuardHome
 #######################################################################################################################
-FROM golang:1.18.1-alpine3.15 as builder
+FROM golang:1-alpine3.16 as builder
 
 # Add unprivileged user and group
 RUN echo "adguardhome:x:1000:1000:adguardhome:/:" > /etc_passwd && \
