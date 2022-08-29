@@ -40,7 +40,7 @@ RUN upx --best /net-tools/arp && \
 FROM lansible/nexe:4.0.0-beta.19 as frontend
 
 # https://github.com/AdguardTeam/AdGuardHome/releases/
-ENV VERSION=v0.107.8
+ENV VERSION=v0.107.11
 
 RUN git clone --depth 1 --branch "${VERSION}" https://github.com/AdguardTeam/AdGuardHome.git /AdGuardHome
 
