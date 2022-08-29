@@ -60,7 +60,7 @@ RUN CORES=$(grep -c '^processor' /proc/cpuinfo); \
 #######################################################################################################################
 # Build static AdGuardHome
 #######################################################################################################################
-FROM golang:1-alpine3.16 as builder
+FROM golang:1.18-alpine3.16 as builder
 
 # Add unprivileged user and group
 RUN echo "adguardhome:x:1000:1000:adguardhome:/:" > /etc_passwd && \
