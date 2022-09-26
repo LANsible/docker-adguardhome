@@ -37,12 +37,13 @@ RUN upx --best /net-tools/arp && \
 #######################################################################################################################
 # Build AdGuardHome frontend
 #######################################################################################################################
-FROM lansible/nexe:4.0.0-beta.19 as frontend
+FROM node:16.17-alpine3.16 as frontend
 
 # https://github.com/AdguardTeam/AdGuardHome/releases/
-ENV VERSION=v0.107.11
+ENV VERSION=v0.107.13
 
-RUN git clone --depth 1 --branch "${VERSION}" https://github.com/AdguardTeam/AdGuardHome.git /AdGuardHome
+RUN apk add --no-cache git && \
+    git clone --depth 1 --branch "${VERSION}" https://github.com/AdguardTeam/AdGuardHome.git /AdGuardHome
 
 WORKDIR /AdGuardHome/client
 
